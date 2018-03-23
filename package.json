@@ -1,0 +1,25 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "An online marketplace simualation that uses mySQL and JavaScript to allow CLI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbdoyle182/BamazonApp.git"
+  },
+  "author": "Daniel Doyle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dbdoyle182/BamazonApp/issues"
+  },
+  "homepage": "https://github.com/dbdoyle182/BamazonApp#readme",
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "inquirer": "^5.1.0",
+    "moment": "^2.21.0",
+    "mysql": "^2.15.0"
+  }
+}
