@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 });
 var UserSelect = function() {
 
-    var self = this;
+    var user = this;
 
     this.afterConnection = function() {
         connection.query('SELECT * FROM products', function(err, res) {
@@ -32,7 +32,7 @@ var UserSelect = function() {
             };
             console.log('WELCOME TO BAMAZON');
             console.log('' + t);
-            self.customerPrompt();
+         user.customerPrompt();
         })
     };
 
@@ -58,7 +58,7 @@ var UserSelect = function() {
                 default: true
             }]).then(function(response) {
                 if (response.confirm) {
-                    self.customerPrompt();
+                 user.customerPrompt();
                 } else {
                     console.log(chalk.bgMagenta("Have a wonderful day!"));
                     connection.end();
@@ -100,14 +100,7 @@ var UserSelect = function() {
                     if (err) throw err;
                     if (res[0].stock_quantity < response.quantity) {
                         console.log(chalk.red("Not enough of the product in stock, SORRY!"));
-                        self.shopAgain();
-                    } else {
-                        console.log(chalk.yellow("We have that in stock!"));
-                        var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
-                        var newID = parseInt(response.product_id);
-                        self.updateQuantity(newQuantity, newID);
-                        console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
-                        self.shopAgain();
+                     user.shopAgain();
                     }
             })
         })
@@ -116,7 +109,7 @@ var UserSelect = function() {
     this.connectToDatabase = function () {
         connection.connect(function(err) {
             if (err) throw err;
-            self.afterConnection();
+         user.afterConnection();
         });
     };
 
