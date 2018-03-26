@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 });
 var UserSelect = function() {
 
-    var user = this;
+    var self = this;
 
     this.afterConnection = function() {
         connection.query('SELECT * FROM products', function(err, res) {
@@ -32,7 +32,7 @@ var UserSelect = function() {
             };
             console.log('WELCOME TO BAMAZON');
             console.log('' + t);
-         user.customerPrompt();
+            self.customerPrompt();
         })
     };
 
@@ -58,7 +58,7 @@ var UserSelect = function() {
                 default: true
             }]).then(function(response) {
                 if (response.confirm) {
-                 user.customerPrompt();
+                    self.customerPrompt();
                 } else {
                     console.log(chalk.bgMagenta("Have a wonderful day!"));
                     connection.end();
@@ -100,7 +100,14 @@ var UserSelect = function() {
                     if (err) throw err;
                     if (res[0].stock_quantity < response.quantity) {
                         console.log(chalk.red("Not enough of the product in stock, SORRY!"));
-                     user.shopAgain();
+                        self.shopAgain();
+                    } else {
+                        console.log(chalk.yellow("We have that in stock!"));
+                        var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
+                        var newID = parseInt(response.product_id);
+                        self.updateQuantity(newQuantity, newID);
+                        console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
+                        self.shopAgain();
                     }
             })
         })
@@ -109,14 +116,11 @@ var UserSelect = function() {
     this.connectToDatabase = function () {
         connection.connect(function(err) {
             if (err) throw err;
-         user.afterConnection();
+            self.afterConnection();
         });
     };
 
 };
 
-module.exports = UserSelect;
-
-var newUserSelect = new UserSelect();
-
-newUserSelect.connectToDatabase();
+var UserSelect = new UserSelect();
+UserSelect.connectToDatabase();
