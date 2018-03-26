@@ -50,6 +50,23 @@ function updateQuantity(newQuantity, newID) {
     })
 }
 
+function shopAgain() {
+    inquirer
+        .prompt([{
+            type: 'confirm',
+            message: 'Would you like to continue shopping?',
+            name: 'confirm',
+            default: true
+        }]).then(function(response) {
+            if (response.confirm) {
+                customerPrompt();
+            } else {
+                console.log("Have a wonderful day!");
+                connection.end();
+            }
+        })
+}
+
 function customerPrompt () {
     inquirer
         .prompt ([
@@ -84,14 +101,14 @@ function customerPrompt () {
                 if (err) throw err;
                 if (res[0].stock_quantity < response.quantity) {
                     console.log("No enough of the product in stock, SORRY!");
-                    customerPrompt();
+                    shopAgain();
                 } else {
                     console.log("We have that in stock!");
                     var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
                     var newID = parseInt(response.product_id);
                     updateQuantity(newQuantity, newID);
                     console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
-                    connection.end();
+                    shopAgain();
                  }
         })
     })
