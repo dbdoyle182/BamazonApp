@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var Table = require('terminal-table');
 var chalk = require('chalk');
+var inquirer = require('inquirer');
 var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -12,6 +13,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     afterConnection();
+    connection.end();
 });
 
 function afterConnection() {
@@ -21,16 +23,49 @@ function afterConnection() {
             horizontalLine: true,
             width: ['20%', '50%', '30%']
         });
+        var tableLength = res.length;
         t.push(
             ['ID', 'Product Name', 'Price']
         );
-        for (var i = 0; i < res.length; i++) {
+        for (var i = 0; i < tableLength; i++) {
             t.push(
                 [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + res[i].price)]
             )
         };
         console.log('WELCOME TO BAMAZON');
         console.log('' + t);
-        connection.end();
+        customerPrompt();
     })
+}
+
+function customerPrompt () {
+    inquirer
+        .prompt ([
+            {
+                message: "Which product would you like to purchase?",
+                name: "product_id",
+                validate: function(input) {
+                    if(input < 1 || input > (tableLength + 1)) {
+                        return "Please choose a valid product ID"
+                    }
+                    return true;
+                }
+            },{
+                message: "How many would you like to purchase?",
+                name: "quantity",
+                validate: function(input) {
+                    if(typeof input != "number") {
+                        return "Please enter a numeric value for quantity"
+                    }
+                    return true; 
+                },
+                filter: function(input) {
+                    return Math.abs(input)
+                }
+                
+            }
+        ]).then(function(response){
+            console.log(response.product_id + "\n" + response.quantity);
+            }
+        )
 }
