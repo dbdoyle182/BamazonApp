@@ -22,7 +22,8 @@ VALUES ('Supersonic Headphones', 'Electronics', 60.99, 50),
 ('Ultra Allergy Medicine', 'Medicine', 24.99, 100),
 ('Star Wars Lightsaber', 'Toys and Games', 109.99, 15),
 ('Poop Emoji Pillow', 'Home Decor', 14.99, 500),
-('Cat Leash', 'Pet Goods', 11.99, 35);
+('Cat Leash', 'Pet Goods', 11.99, 35),
+('Cold Brew Maker', 'Appliances', 34.99, 100);
 
 SELECT *
 FROM products;

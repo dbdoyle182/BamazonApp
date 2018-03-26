@@ -14,7 +14,6 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     afterConnection();
-    connection.end();
 });
 
 function afterConnection() {
@@ -38,6 +37,18 @@ function afterConnection() {
         customerPrompt();
     })
 }
+function updateQuantity(newQuantity, newID) {
+    connection.query('UPDATE products SET ? WHERE ?', [
+        {
+            stock_quantity: newQuantity
+        },{
+            item_id: newID
+        }
+    ], function(err, result) {
+        if (err) throw err;
+        
+    })
+}
 
 function customerPrompt () {
     inquirer
@@ -45,12 +56,15 @@ function customerPrompt () {
             {
                 message: "Which product would you like to purchase?",
                 name: "product_id",
+                filter: function(input) {
+                    return parseInt(input);
+                },
                 validate: function(input) {
-                    if(input < 1 || input > (tableLength + 1)) {
+                    if(input < 1 || input > (tableLength) || typeof input != 'number') {
                         return "Please choose a valid product ID"
                     }
                     return true;
-                }
+                },
             },{
                 message: "How many would you like to purchase?",
                 name: "quantity",
@@ -66,7 +80,19 @@ function customerPrompt () {
                 
             }
         ]).then(function(response){
-            console.log(response.product_id + "\n" + response.quantity);
-            }
-        )
+            connection.query('SELECT * FROM products WHERE ?', {item_id: response.product_id}, function(err, res) {
+                if (err) throw err;
+                if (res[0].stock_quantity < response.quantity) {
+                    console.log("No enough of the product in stock, SORRY!");
+                    customerPrompt();
+                } else {
+                    console.log("We have that in stock!");
+                    var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
+                    var newID = parseInt(response.product_id);
+                    updateQuantity(newQuantity, newID);
+                    console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
+                    connection.end();
+                 }
+        })
+    })
 }
