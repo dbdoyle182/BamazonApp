@@ -38,15 +38,118 @@ var ManagerTasks = function () {
     this.viewInventory = function() {
         connection.query('SELECT * FROM products', function(err, res) {
             manager.tableBuild(err, res);
+            manager.endMenu();
         });
     };
     this.viewLowInventory = function () {
         connection.query('SELECT * FROM products WHERE stock_quantity < 5', function(err, res){
             manager.tableBuild(err, res);
+            manager.endMenu();
         });
     };
+    this.updateInventory = function () {
+        inquirer
+            .prompt([
+                {
+                    message: 'What is the ID of the item you wish to update?',
+                    name: 'Update'
+                },{
+                    message: 'How much of the item should there be?',
+                    name: 'AddStock'
+                }
+            ]).then(function(response){
+                connection.query('UPDATE products SET ? WHERE ?', [
+                    {
+                        stock_quantity: parseInt(response.AddStock)
+                    },{
+                        item_id: parseInt(response.Update)
+                    }
+                ], function(err, res){
+                    if(err) throw err;
+                    console.log('The item has been updated')
+                    manager.endMenu();
+                });
+            });
+    };
+    this.addNewItem = function() {
+        inquirer
+            .prompt([
+                {
+                    message: 'What is the name of the item?',
+                    name: 'Item'
+                },{
+                    type: 'list',
+                    message: 'What department is this found in?',
+                    choices: ['Electronics','Pet Goods', 'Appliances', 'Baby Products', 'Clothing', 'Home Improvement', 'Medicine', 'Toys and Games', 'Home Decor'],
+                    name: 'Department'
+                },{
+                    message: 'How much does this item cost?',
+                    name: 'Price'
+                },{
+                    message: 'How much of the item is in stock?',
+                    name: 'Quantity'
+                }
+            ]).then(function(response) {
+                connection.query('INSERT INTO products SET ?', 
+            {
+                product_name: response.Item,
+                department_name: response.Department,
+                price: parseFloat(response.Price),
+                stock_quantity: parseInt(response.Quantity)
+            }, function(err, res) {
+                if (err) throw err;
+                console.log('Your item was sucessfully added')
+                manager.endMenu();
+            })
+        })
+    }
+    this.managerMenu = function () {
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    message: 'What task would you like to perform?',
+                    choices: ['View Inventory','View Low Inventory','Update Inventory','Add a new item'],
+                    name: 'Option'
+                }
+            ]).then(function(response){
+                switch (response.Option) {
+                    case 'View Inventory':
+                        manager.viewInventory();
+                        break;
+                    case 'View Low Inventory':
+                        manager.viewLowInventory();
+                        break;
+                    case 'Update Inventory':
+                        manager.updateInventory();
+                        break;
+                    case 'Add a new item':
+                        manager.addNewItem();
+                        break;
+                    default: console.log('Something went terribly wrong')
+                }
+            })
+    };
+    this.endMenu = function() {
+        inquirer
+            .prompt([
+                {
+                    type: 'confirm',
+                    message: 'Would you like to return to the manager menu?',
+                    default: true,
+                    name: 'confirm'
+                }
+            ]).then(function(response) {
+                if (response.confirm) {
+                    manager.managerMenu();
+                } else {
+                    console.log('Thank you for using the management interface');
+                    connection.end();
+                }
+            })
+    }
 
 };
 var newManager = new ManagerTasks();
-newManager.viewLowInventory();
+newManager.managerMenu();
 module.exports = ManagerTasks;
