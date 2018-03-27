@@ -26,8 +26,10 @@ var UserSelect = function() {
                 ['ID', 'Product Name', 'Price']
             );
             for (var i = 0; i < tableLength; i++) {
+                var num = (res[i].price).toFixed(2);
+                console.log(num)
                 t.push(
-                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + res[i].price)]
+                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$ ' + num)]
                 )
             };
             console.log('WELCOME TO BAMAZON');

@@ -10,9 +10,26 @@ var connection = mysql.createConnection({
     password: 'taffy182!',
     database: 'db_bamazon'
 });
-var positionOfUser = 'customer';
+var newUser = new ManagerTasks();
+inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: 'Welcome to Bamazon, who are you?',
+            name: 'position',
+            choices: ['Customer', 'Manager']
+        }
+    ]).then(function(response) {
+        switch (response.position) {
+            case 'Customer':
+            newUser.newUserSelect();
+            break;
+            case 'Manager':
+            newUser.managerMenu();
+            break;
+            default:
+            console.log('What did you do?')
+            
+        }
+    })
 
-if (positionOfUser === 'customer') {
-    var newCustomer = new ManagerTasks();
-    newCustomer.newUserSelect();
-}

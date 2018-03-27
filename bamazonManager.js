@@ -29,7 +29,7 @@ var ManagerTasks = function () {
             );
             for (var i = 0; i < tableLength; i++) {
                 t.push(
-                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + res[i].price), chalk.red(res[i].stock_quantity)]
+                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + (res[i].price).toFixed(2)), chalk.red(res[i].stock_quantity)]
                 )
             };
             console.log('Welcome to the inventory management services')
@@ -150,6 +150,5 @@ var ManagerTasks = function () {
     }
 
 };
-var newManager = new ManagerTasks();
-newManager.managerMenu();
+
 module.exports = ManagerTasks;
