@@ -122,5 +122,6 @@ var UserSelect = function() {
 
 };
 
-var UserSelect = new UserSelect();
-UserSelect.connectToDatabase();
+
+
+module.exports = UserSelect;

@@ -14,10 +14,39 @@ var connection = mysql.createConnection({
 var ManagerTasks = function () {
     var manager = this;
     this.newUserSelect = function() {
-        console.log(UserSelect);
+        var newUser = new UserSelect();
+        newUser.connectToDatabase();
+    };
+    this.tableBuild = function (err, res) {
+        if (err) throw err;
+            var t = new Table({
+                horizontalLine: true,
+                width: ['20%', '40%', '20%', '20%']
+            });
+            tableLength = res.length;
+            t.push(
+                ['ID', 'Product Name', 'Price', 'Quantity']
+            );
+            for (var i = 0; i < tableLength; i++) {
+                t.push(
+                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + res[i].price), chalk.red(res[i].stock_quantity)]
+                )
+            };
+            console.log('Welcome to the inventory management services')
+            console.log('' + t)
+    }
+    this.viewInventory = function() {
+        connection.query('SELECT * FROM products', function(err, res) {
+            manager.tableBuild(err, res);
+        });
+    };
+    this.viewLowInventory = function () {
+        connection.query('SELECT * FROM products WHERE stock_quantity < 5', function(err, res){
+            manager.tableBuild(err, res);
+        });
     };
 
-}
-
-var newManagerTasks = new ManagerTasks();
-newManagerTasks.newUserSelect();
+};
+var newManager = new ManagerTasks();
+newManager.viewLowInventory();
+module.exports = ManagerTasks;
