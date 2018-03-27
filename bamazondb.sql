@@ -1,3 +1,4 @@
+-- Initial schema 
 DROP DATABASE IF EXISTS db_bamazon;
 
 CREATE DATABASE db_bamazon;
