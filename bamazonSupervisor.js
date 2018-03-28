@@ -1,0 +1,1 @@
+var Table = require('terminal-table');

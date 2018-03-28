@@ -1,3 +1,4 @@
+// Requiring all of the various npm packages and global variables
 var mysql = require('mysql');
 var Table = require('terminal-table');
 var chalk = require('chalk');
@@ -10,10 +11,12 @@ var connection = mysql.createConnection({
     password: 'taffy182!',
     database: 'db_bamazon'
 });
+
+// Constructor that builds the customer object
 var UserSelect = function() {
-
+    // Stores this referring to the constructor variable to enable recursion
     var self = this;
-
+    // This creates the table that appears in the customer interface
     this.afterConnection = function() {
         connection.query('SELECT * FROM products', function(err, res) {
             if (err) throw err;
@@ -34,10 +37,11 @@ var UserSelect = function() {
             };
             console.log('WELCOME TO BAMAZON');
             console.log('' + t);
+            // This calls the function which customers can purchase items
             self.customerPrompt();
         })
     };
-
+    // Function that updates the database after a customer purchases an item
     this.updateQuantity = function(newQuantity, newID, purchased, sales) {
         connection.query('UPDATE products SET ? WHERE ?', [
             {
@@ -52,7 +56,7 @@ var UserSelect = function() {
             
         })
     };
-
+    // Function that allows recursion so customers may continue to shop for as long as they like
     this.shopAgain = function() {
         inquirer
             .prompt([{
@@ -69,7 +73,7 @@ var UserSelect = function() {
                 }
             })
     };
-
+    // Function for the prompt that collects customer selection and performs appropriate actions with the response
     this.customerPrompt = function() {
         inquirer
             .prompt ([
@@ -107,10 +111,15 @@ var UserSelect = function() {
                         self.shopAgain();
                     } else {
                         console.log(chalk.yellow("We have that in stock!"));
+                        // Creates a variable with updated stock quantity
                         var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
+                        // Creates a variable that holds the customers selected item id
                         var newID = parseInt(response.product_id);
+                        // Creates a variable with updated total purchased of an item (All time)
                         var purchased = parseInt(res[0].item_bought) + parseInt(response.quantity);
+                        // Creates a variable with updated total sales of an item (All time; In dollars)
                         var sales = parseInt(res[0].item_sales) + parseInt(res[0].price * response.quantity);
+                        // Calls previous function and passes arguments provided by the previous query
                         self.updateQuantity(newQuantity, newID, purchased, sales);
                         console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
                         self.shopAgain();
@@ -118,7 +127,7 @@ var UserSelect = function() {
             })
         })
     };
-
+    // Function that establishes connection to the database
     this.connectToDatabase = function () {
         connection.connect(function(err) {
             if (err) throw err;
@@ -129,5 +138,5 @@ var UserSelect = function() {
 };
 
 
-
+// Exports this constructor for use in other JavaScript files
 module.exports = UserSelect;
