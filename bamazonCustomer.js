@@ -78,7 +78,7 @@ var UserSelect = function() {
                         return parseInt(input);
                     },
                     validate: function(input) {
-                        if(input < 1 || input > (tableLength) || typeof input != 'number') {
+                        if(input < 1 || input > (tableLength) || isNaN(input)) {
                             return "Please choose a valid product ID"
                         }
                         return true;
@@ -87,7 +87,7 @@ var UserSelect = function() {
                     message: "How many would you like to purchase?",
                     name: "quantity",
                     validate: function(input) {
-                        if(typeof input != "number") {
+                        if(isNaN(input)) {
                             return "Please enter a numeric value for quantity"
                         }
                         return true; 
