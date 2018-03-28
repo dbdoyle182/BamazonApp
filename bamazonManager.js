@@ -1,3 +1,4 @@
+// Require various npm packages
 var mysql = require('mysql');
 var Table = require('terminal-table');
 var chalk = require('chalk');
@@ -10,13 +11,16 @@ var connection = mysql.createConnection({
     password: 'taffy182!',
     database: 'db_bamazon'
 });
-
+// Beginning of manager constructor
 var ManagerTasks = function () {
+    // Variable that allows for call of methods inside of methods
     var manager = this;
+    // Places the customer constructor into the manager constructor
     this.newUserSelect = function() {
         var newUser = new UserSelect();
         newUser.connectToDatabase();
     };
+    // A function that builds the table that appears in the manager database when viewing inventory
     this.tableBuild = function (err, res) {
         if (err) throw err;
             var t = new Table({
@@ -34,19 +38,22 @@ var ManagerTasks = function () {
             };
             console.log('Welcome to the inventory management services')
             console.log('' + t)
-    }
+    };
+    // Function that allows the manager to view a table with the inventory, similar to customer with the addition of quantity 
     this.viewInventory = function() {
         connection.query('SELECT * FROM products', function(err, res) {
             manager.tableBuild(err, res);
             manager.endMenu();
         });
     };
+    // Same as the above function with a where clause added to the query in order to filter products with a low inventory 
     this.viewLowInventory = function () {
         connection.query('SELECT * FROM products WHERE stock_quantity < 5', function(err, res){
             manager.tableBuild(err, res);
             manager.endMenu();
         });
     };
+    // Function that allows the manager to update the inventory of an item
     this.updateInventory = function () {
         inquirer
             .prompt([
@@ -71,6 +78,7 @@ var ManagerTasks = function () {
                 });
             });
     };
+    // Function that allows the manager to add a new item
     this.addNewItem = function() {
         inquirer
             .prompt([
@@ -90,6 +98,7 @@ var ManagerTasks = function () {
                     name: 'Quantity'
                 }
             ]).then(function(response) {
+                // Passes the responses into the database in their corresponding positions
                 connection.query('INSERT INTO products SET ?', 
             {
                 product_name: response.Item,
@@ -102,7 +111,8 @@ var ManagerTasks = function () {
                 manager.endMenu();
             })
         })
-    }
+    };
+    // Function for the manager menu that lists the actions that can be performed
     this.managerMenu = function () {
         inquirer
             .prompt([
@@ -130,6 +140,7 @@ var ManagerTasks = function () {
                 }
             })
     };
+    // Function that allows for the recursion of the manager application and otherwise ends connection
     this.endMenu = function() {
         inquirer
             .prompt([
@@ -151,4 +162,5 @@ var ManagerTasks = function () {
 
 };
 
+// Exports the manager constructor
 module.exports = ManagerTasks;
