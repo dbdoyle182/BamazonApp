@@ -38,10 +38,12 @@ var UserSelect = function() {
         })
     };
 
-    this.updateQuantity = function(newQuantity, newID) {
+    this.updateQuantity = function(newQuantity, newID, purchased, sales) {
         connection.query('UPDATE products SET ? WHERE ?', [
             {
-                stock_quantity: newQuantity
+                stock_quantity: newQuantity,
+                item_bought: purchased,
+                item_sales: sales
             },{
                 item_id: newID
             }
@@ -107,7 +109,9 @@ var UserSelect = function() {
                         console.log(chalk.yellow("We have that in stock!"));
                         var newQuantity = parseInt(res[0].stock_quantity - response.quantity);
                         var newID = parseInt(response.product_id);
-                        self.updateQuantity(newQuantity, newID);
+                        var purchased = parseInt(res[0].item_bought) + parseInt(response.quantity);
+                        var sales = parseInt(res[0].item_sales) + parseInt(res[0].price * response.quantity);
+                        self.updateQuantity(newQuantity, newID, purchased, sales);
                         console.log("Thanks for your order, the total of the purchase is $ " + res[0].price * response.quantity)
                         self.shopAgain();
                     }
