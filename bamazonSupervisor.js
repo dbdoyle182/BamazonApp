@@ -1,5 +1,5 @@
 // Creates variables for all of the npm packages required
-var Table = require('terminal-table');
+var bamazonManager = require('./bamazonManager');
 
 
 // Creates a constructor function that will have all of the available methods for the supervisor

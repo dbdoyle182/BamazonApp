@@ -18,16 +18,19 @@ var UserSelect = function() {
     var self = this;
     // This creates the table that appears in the customer interface
     this.afterConnection = function() {
+        // Querying the database to present all products
         connection.query('SELECT * FROM products', function(err, res) {
             if (err) throw err;
             var t = new Table({
                 horizontalLine: true,
                 width: ['20%', '50%', '30%']
             });
+            // Reassigns table length variable to match the current length of the database response
             tableLength = res.length;
             t.push(
                 ['ID', 'Product Name', 'Price']
             );
+            // Loops through query results to push individual items into our table
             for (var i = 0; i < tableLength; i++) {
                 var num = (res[i].price).toFixed(2);
                 console.log(num)
@@ -65,6 +68,7 @@ var UserSelect = function() {
                 name: 'confirm',
                 default: true
             }]).then(function(response) {
+                // If they select yes then rerun the application if no exit the application
                 if (response.confirm) {
                     self.customerPrompt();
                 } else {
