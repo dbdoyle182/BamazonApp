@@ -55,29 +55,33 @@ var Supervisor = function () {
 
     // Method to view a table of departments and sales
     this.tableViewDepartments = function () {
-        connection.query('SELECT * FROM departments', function (err, res) {
+        connection.query("SELECT departProd.department_id, departProd.department_name, departProd.over_head_costs, SUM(departProd.product_sales) as product_sales, (SUM(departProd.product_sales) - departProd.over_head_costs) as total_profit FROM (SELECT departments.department_id, departments.department_name, departments.over_head_costs, IFNULL(products.item_sales, 0) as product_sales FROM products RIGHT JOIN departments ON products.department_name = departments.department_name) as departProd GROUP BY department_id", function (err, res) {
             if(err) throw err;
-
+            
             var t = new Table({
                 horizontalLine: true,
-                width: []
+                width: ["10%","30%","20%","20%","20%"]
             });
             t.push(
-                []
+                ["ID","Name","Overhead Costs","Product Sales","Total Profit"]
             );
             for (let item in res) {
-                t.push([])
+                console.log(res[item])
+                t.push([res[item].deparment_id, res[item].department_name, res[item].over_head_costs, res[item].product_sales, res[item].total_profit])
             }
+            console.log("Welcome to Supervisor Department management")
+            console.log('' + t)
+            supervisor.promptSupervisor()
         })
     }
 
     // Method that allows the supervisor to see the sales by department
     this.viewDepartmentSales = function () {
         connection.query(
-            "SELECT departProd.department_id, departProd.department_name, departProd.over_head_costs, SUM(departProd.product_sales) as product_sales, (SUM(departProd.product_sales) - departProd.over_head_costs) as total_profit FROM (SELECT departments.department_id, departments.department_name, departments.over_head_costs, IFNULL(products.product_sales, 0) as product_sales FROM products RIGHT JOIN departments ON products.department_name = departments.department_name) as departProd GROUP BY department_id",
+            "SELECT departProd.department_id, departProd.department_name, departProd.over_head_costs, SUM(departProd.product_sales) as product_sales, (SUM(departProd.product_sales) - departProd.over_head_costs) as total_profit FROM (SELECT departments.department_id, departments.department_name, departments.over_head_costs, IFNULL(products.item_sales, 0) as product_sales FROM products RIGHT JOIN departments ON products.department_name = departments.department_name) as departProd GROUP BY department_id",
             function(err, res) {
-              console.table(res);
-              promptSupervisor();
+              console.log(res);
+              
             }
           );
     };
@@ -103,7 +107,7 @@ var Supervisor = function () {
                         supervisor.tableViewAll();
                         break;
                     case "View All Departments":
-                        console.log(answer.choice);
+                        supervisor.tableViewDepartments();
                         break;
                     case "View Product Sales by Department":
                         console.log(answer.choice);

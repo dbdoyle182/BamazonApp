@@ -18,6 +18,6 @@ VALUES ("Electronics", 200),
   ("Appliances", 50),
   ("Baby Products", 300),
   ("Home Improvement", 35),
-  ("Medicine", 0),
+  ("Medicine", 100),
   ("Toys and Games", 125),
   ("Home Decor", 50)
