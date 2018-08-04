@@ -9,4 +9,5 @@ SELECT departProd.department_id, departProd.department_name, departProd.over_hea
 FROM (SELECT departments.department_id, departments.department_name, departments.over_head_costs, IFNULL(products.item_sales, 0) as product_sales 
 FROM products 
 RIGHT JOIN departments ON products.department_name = departments.department_name) as departProd
+WHERE department_name = "Electronics"
 GROUP BY department_id;

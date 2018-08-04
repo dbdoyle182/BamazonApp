@@ -78,6 +78,20 @@ var ManagerTasks = function () {
                 });
             });
     };
+
+    // Function grabs all department names and returns an array with them
+    this.grabDepartmentNames = function() {
+        const departmentnames = [];
+        connection.query("SELECT department_name FROM departments" , function(err, res){
+            
+            if (err) throw err;
+            
+            for (let name in res) {
+                departmentnames.push(res[name].department_name)
+            }
+        })
+        return departmentnames;
+    }
     // Function that allows the manager to add a new item
     this.addNewItem = function() {
         inquirer
@@ -88,7 +102,7 @@ var ManagerTasks = function () {
                 },{
                     type: 'list',
                     message: 'What department is this found in?',
-                    choices: ['Electronics','Pet Goods', 'Appliances', 'Baby Products', 'Clothing', 'Home Improvement', 'Medicine', 'Toys and Games', 'Home Decor'],
+                    choices: manager.grabDepartmentNames(),
                     name: 'Department'
                 },{
                     message: 'How much does this item cost?',
