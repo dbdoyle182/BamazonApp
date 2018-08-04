@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: 'taffy182!',
+    password: '',
     database: 'db_bamazon'
 });
 // Beginning of manager constructor
@@ -25,15 +25,15 @@ var ManagerTasks = function () {
         if (err) throw err;
             var t = new Table({
                 horizontalLine: true,
-                width: ['20%', '40%', '20%', '20%']
+                width: ['10%', '30%', '10%', '10%','20%','10%','10%']
             });
             tableLength = res.length;
             t.push(
-                ['ID', 'Product Name', 'Price', 'Quantity']
+                ['ID', 'Product Name', 'Price', 'Quantity','Department','Items Bought','Total Sales']
             );
             for (var i = 0; i < tableLength; i++) {
                 t.push(
-                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + (res[i].price).toFixed(2)), chalk.red(res[i].stock_quantity)]
+                    [chalk.blue(res[i].item_id), chalk.yellow(res[i].product_name), chalk.green('$' + (res[i].price).toFixed(2)), chalk.red(res[i].stock_quantity).chalk.red(res[i].department_name),chalk.red(res[i].item_bought),chalk.red(res[i].item_sales).toFixed(2)]
                 )
             };
             console.log('Welcome to the inventory management services')
