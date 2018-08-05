@@ -1,18 +1,8 @@
 // Creates variables that hold the various npm packages required
-var mysql = require('mysql');
-var Table = require('terminal-table');
-var chalk = require('chalk');
 var inquirer = require('inquirer');
-var ManagerTasks = require('./bamazonManager.js')
-var connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: '',
-    database: 'db_bamazon'
-});
+var SupervisorTasks = require('./bamazonSupervisor')
 // Creates an object that holds all of the exported methods
-var newUser = new ManagerTasks();
+var newUser = new SupervisorTasks();
 // The start menu that asks who the user is
 inquirer
     .prompt([
@@ -20,21 +10,23 @@ inquirer
             type: 'list',
             message: 'Welcome to Bamazon, who are you?',
             name: 'position',
-            choices: ['Customer', 'Manager']
+            choices: ['Customer', 'Manager', 'Supervisor','Quit']
         }
     ]).then(function(response) {
         switch (response.position) {
             case 'Customer':
             // Runs the customer interface
-            newUser.newUserSelect();
+            newUser.newCustomer();
             break;
             case 'Manager':
             // Runs the manager interface
-            newUser.managerMenu();
+            newUser.newManager();
+            break;
+            case 'Supervisor':
+            newUser.promptSupervisor()
             break;
             default:
-            console.log('What did you do?')
-            
+            connection.end();
         }
     });
 

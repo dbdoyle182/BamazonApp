@@ -115,8 +115,39 @@ var Supervisor = function () {
     this.createDepartment = function () {
         inquirer
             .prompt([{
+                name: "name",
+                message: "What is the department name?",
+                validate: function(input) {
+                    if(input.length < 1) {
+                        return "Please enter a department name"
+                    }
+                    return true;
+                }
+            },
+            {
+                name: "overhead",
+                message: "What is the overhead cost?",
+                validate: function(input) {
+                    if(isNaN(input)) {
+                        return "Please enter a numeric value for quantity"
+                    }
+                    return true; 
+                },
+                filter: function(input) {
+                    return parseInt(input)
+                }
+            }
+        ]).then(function(val){
+            connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES (?, ?)",
+            [val.name, val.overhead], 
+            function(err, res) {
+                if (err) throw err;
 
-            }])
+                console.log("Thanks for adding this department!");
+                supervisor.promptSupervisor();
+            })
+        });
+        
     };
 
     // Method that creates the supervisor menu
@@ -141,7 +172,7 @@ var Supervisor = function () {
                         supervisor.viewDepartmentSales();
                         break;
                     case "Create New Department":
-                        console.log(answer.choice);
+                        supervisor.createDepartment();
                         break;
                     case "Quit":
                         connection.end();
@@ -156,8 +187,7 @@ var Supervisor = function () {
 
 
 };
-var NewSupervisor = new Supervisor();
-NewSupervisor.promptSupervisor();
+
 // NewSupervisor.tableViewAll();
 // Exports the constructor to any files
 module.exports = Supervisor;

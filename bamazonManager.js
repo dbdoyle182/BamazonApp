@@ -133,7 +133,7 @@ var ManagerTasks = function () {
                 {
                     type: 'list',
                     message: 'What task would you like to perform?',
-                    choices: ['View Inventory','View Low Inventory','Update Inventory','Add a new item'],
+                    choices: ['View Inventory','View Low Inventory','Update Inventory','Add a new item','Quit'],
                     name: 'Option'
                 }
             ]).then(function(response){
@@ -150,7 +150,8 @@ var ManagerTasks = function () {
                     case 'Add a new item':
                         manager.addNewItem();
                         break;
-                    default: console.log('Something went terribly wrong')
+                    default: 
+                        connection.end();
                 }
             })
     };
